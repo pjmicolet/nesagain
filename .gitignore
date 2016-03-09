@@ -1,0 +1,28 @@
+.vs/NES Emulator/v14/.suo
+.vs/NES/v14/.suo
+Debug/NES Emulator.Build.CppClean.log
+Debug/NES Emulator.log
+Debug/NES Emulator.tlog/CL.command.1.tlog
+Debug/NES Emulator.tlog/CL.read.1.tlog
+Debug/NES Emulator.tlog/CL.write.1.tlog
+Debug/NES Emulator.tlog/NES Emulator.lastbuildstate
+Debug/NES Emulator.tlog/unsuccessfulbuild
+Debug/NES.Build.CppClean.log
+Debug/NES.log
+Debug/nestest.nes
+NES.VC.opendb
+Release/NES.exe
+Release/NES.log
+Release/NES.pdb
+Release/NES.tlog/CL.command.1.tlog
+Release/NES.tlog/CL.read.1.tlog
+Release/NES.tlog/CL.write.1.tlog
+Release/NES.tlog/NES.lastbuildstate
+Release/NES.tlog/link.command.1.tlog
+Release/NES.tlog/link.read.1.tlog
+Release/NES.tlog/link.write.1.tlog
+Release/cpu.obj
+Release/instructions.obj
+Release/main.obj
+Release/romfile.obj
+Release/vc140.pdb
