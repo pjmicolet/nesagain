@@ -104,7 +104,7 @@ int enter_cpu(unsigned char *buffer)
    CPU cpu;
    initiate_cpu(&cpu);
    int i = 0;
-   while(i < 110)
+   while(i < 220)
    {
      decode_and_execute(&cpu,buffer);
      i++;
