@@ -29,6 +29,11 @@ void cmp_imm(CPU* cpu, unsigned char* buffer);
 void cld(CPU* cpu, unsigned char* buffer);
 void pha(CPU* cpu, unsigned char* buffer);
 void plp(CPU* cpu, unsigned char* buffer);
+void bmi(CPU* cpu, unsigned char* buffer);
+void ora_imm(CPU* cpu, unsigned char* buffer);
+void clv(CPU* cpu, unsigned char* buffer);
+void eor_imm(CPU* cpu, unsigned char* buffer);
+void adc_imm(CPU* cpu, unsigned char* buffer);
 
 uint8_t address_bytes[256] = {0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 2, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 0, 0, 1, 1, 1, 1, 0, 2, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 2, 2, 2, 2, 1, 1, 0, 1, 1, 1, 1, 1, 0, 2, 0, 0, 2, 2, 2, 2, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0};
 
@@ -86,18 +91,18 @@ char* inst_name[256] =  { "brk", "ora", "kil", "slo", "nop", "ora", "asl", "slo"
 			  "beq", "sbc", "kil", "isc", "nop", "sbc", "inc", "isc", "sed", "sbc", "nop", "isc", "nop", "sbc", "inc", "isc"};
 
 
-void (*instruction[])(CPU*,unsigned char*) = {jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,php,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+void (*instruction[])(CPU*,unsigned char*) = {jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,php,ora_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bpl,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,clc,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  jsr,jmp_abs,jmp_abs,jmp_abs,bit_zp,jmp_abs,jmp_abs,jmp_abs,plp,and_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
-											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,sec,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
-											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,pha,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+											  bmi,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,sec,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,pha,eor_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bvc,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
-											  rts,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,pla,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+											  rts,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,pla,adc_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bvs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,sei,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,sta_zp,storex_zp,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bcc,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  jmp_abs,jmp_abs,loadx_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,lda_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
-											  bcs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+											  bcs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,clv,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,cmp_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bne,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,cld,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,nop,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
