@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define overflow(A,B,C) (((~(A^B)&(A^C))&0x80) ? 1 : 0)  
+#define overflow(A,B,C) (((~(A^B)) & (B^C)&0x80) ? 1 : 0)  
 
 void jmp_abs(CPU* cpu,unsigned char* buffer)
 {
@@ -400,11 +400,41 @@ void adc_imm(CPU *cpu, unsigned char* buffer)
 {
         uint8_t imm = buffer[(*cpu).PC + 1];
 	uint16_t temp = imm + (*cpu).A + (*cpu).P[0];
-	(*cpu).P[1] = (temp == 0) ? 1 : 0;
+	(*cpu).P[1] = ((temp & 0xFF )== 0) ? 1 : 0;
 	(*cpu).P[7] = (temp & 0x80) ? 1 : 0;
-	(*cpu).P[6] = overflow((*cpu).A,imm,(*cpu).P[0]);
+	(*cpu).P[6] = overflow((*cpu).A,imm,temp);
 	(*cpu).P[0] = (temp & 0x100) ? 1 : 0;
 	(*cpu).A = (uint8_t)(temp & 0x0FF);
 	(*cpu).PC+=2;
 	(*cpu).cycles +=2;
+}
+
+void ldy_imm(CPU *cpu, unsigned char* buffer)
+{
+	uint16_t pc = (*cpu).PC;
+	(*cpu).P[1] = (buffer[pc + 1] == 0) ? 1 : 0;
+	(*cpu).P[7] = (buffer[pc + 1] & 0x80) ? 1 : 0;
+	(*cpu).Y = buffer[pc + 1];
+	(*cpu).PC += 2;
+	(*cpu).cycles += 2;
+}
+
+void cpy_imm(CPU* cpu, unsigned char* buffer)
+{
+	uint8_t comp = (*cpu).Y - buffer[(*cpu).PC + 1];
+	(*cpu).P[0] = ((*cpu).Y >= buffer[(*cpu).PC + 1]) ? 1 : 0;
+	(*cpu).P[1] = ((*cpu).Y == buffer[(*cpu).PC + 1]) ? 1 : 0;
+	(*cpu).P[7] = (comp & 0x80) ? 1 : 0;
+	(*cpu).cycles += 2;
+	(*cpu).PC += 2;
+}
+
+void cpx_imm(CPU* cpu, unsigned char* buffer)
+{
+	uint8_t comp = (*cpu).X - buffer[(*cpu).PC + 1];
+	(*cpu).P[0] = ((*cpu).X >= buffer[(*cpu).PC + 1]) ? 1 : 0;
+	(*cpu).P[1] = ((*cpu).X == buffer[(*cpu).PC + 1]) ? 1 : 0;
+	(*cpu).P[7] = (comp & 0x80) ? 1 : 0;
+	(*cpu).cycles += 2;
+	(*cpu).PC += 2;
 }

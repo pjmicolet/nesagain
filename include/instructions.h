@@ -34,6 +34,10 @@ void ora_imm(CPU* cpu, unsigned char* buffer);
 void clv(CPU* cpu, unsigned char* buffer);
 void eor_imm(CPU* cpu, unsigned char* buffer);
 void adc_imm(CPU* cpu, unsigned char* buffer);
+void ldy_imm(CPU* cpu, unsigned char* buffer);
+void cpy_imm(CPU* cpu, unsigned char* buffer);
+void cpx_imm(CPU* cpu, unsigned char* buffer);
+
 
 uint8_t address_bytes[256] = {0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 2, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 0, 0, 1, 1, 1, 1, 0, 2, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 2, 2, 2, 2, 1, 1, 0, 1, 1, 1, 1, 1, 0, 2, 0, 0, 2, 2, 2, 2, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 2, 2, 2, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 2, 0, 0, 2, 2, 2, 0};
 
@@ -101,11 +105,11 @@ void (*instruction[])(CPU*,unsigned char*) = {jmp_abs,jmp_abs,jmp_abs,jmp_abs,jm
 											  bvs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,sei,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,sta_zp,storex_zp,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bcc,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
-											  jmp_abs,jmp_abs,loadx_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,lda_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+											  ldy_imm,jmp_abs,loadx_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,lda_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bcs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,clv,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
-											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,cmp_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+											  cpy_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,cmp_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  bne,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,cld,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
-											  jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,nop,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
+											  cpx_imm,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,nop,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,
 											  beq,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,sed,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs,jmp_abs};
 
 

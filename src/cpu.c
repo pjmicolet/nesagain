@@ -10,13 +10,23 @@ void initiate_cpu(CPU *cpu)
 	(*cpu).PC=0xC000;
 #endif
 	(*cpu).S = 0xFD;
-	(*cpu).A, (*cpu).X, (*cpu).Y = 0;
+	(*cpu).A = 0;
+	(*cpu).X = 0;
+	(*cpu).Y = 0;
+	(*cpu).P[0] = 0;
+	(*cpu).P[1] = 0;
 	(*cpu).P[2] = 1;
+	(*cpu).P[3] = 0;
 #ifndef NESTEST
 	(*cpu).P[4] = 1;
+#else
+	(*cpu).P[4] = 0;
 #endif
 	(*cpu).P[5] = 1;
+	(*cpu).P[6] = 0;
+	(*cpu).P[7] = 0;
 	(*cpu).cycles = 0;
+	printf("what the fuck %x", get_status_flag((*cpu).P));
 }
 
 uint8_t get_status_flag(uint8_t pflag[])
@@ -104,7 +114,7 @@ int enter_cpu(unsigned char *buffer)
    CPU cpu;
    initiate_cpu(&cpu);
    int i = 0;
-   while(i < 220)
+   while(i < 500)
    {
      decode_and_execute(&cpu,buffer);
      i++;
