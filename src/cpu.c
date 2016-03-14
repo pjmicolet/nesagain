@@ -136,7 +136,7 @@ uint16_t fetch_data(CPU *cpu, unsigned char* buffer)
 	}
 }
 
-uint16_t shift_address(CPU* cpu, char* buffer)
+uint16_t shift_address(CPU* cpu, unsigned char* buffer)
 {
 	switch (addressing_mode[buffer[cpu->PC]])
 	{
@@ -614,7 +614,7 @@ void cpy(CPU* cpu, unsigned char* buffer)
 void cpx(CPU* cpu, unsigned char* buffer)
 {
 	uint8_t value = (uint8_t)(fetch_data(cpu, buffer)&0xFF);
-	uint8_t comp = cpu->X - buffer[cpu->PC + 1];
+	uint8_t comp = cpu->X - value;
 	cpu->P[0] = (cpu->X >= value) ? 1 : 0;
 	cpu->P[1] = (cpu->X == value) ? 1 : 0;
 	cpu->P[7] = (comp & 0x80) ? 1 : 0;
@@ -760,7 +760,7 @@ void lsr(CPU* cpu, unsigned char* buffer)
 		cpu->P[7] = (shift_value & 0x80) ? 1 : 0;
 		cpu->memory[shift_address(cpu, buffer)] = shift_value;
 		cpu->cycles += 3;
-		cpu->PC += address_bytes[buffer[cpu->PC]];
+		cpu->PC += address_bytes[buffer[cpu->PC]] + 1;
 	}
 }
 
@@ -768,7 +768,7 @@ void asl(CPU* cpu, unsigned char* buffer)
 {
 	uint8_t shift_value;
 	if (buffer[cpu->PC] == 0x0A) {
-		cpu->P[0] = cpu->A & 0x80;
+		cpu->P[0] = (cpu->A & 0x80) ? 1 : 0;
 		cpu->A = cpu->A << 1;
 		cpu->cycles += 2;
 		cpu->PC += 1;
@@ -778,13 +778,13 @@ void asl(CPU* cpu, unsigned char* buffer)
 	else
 	{
 		shift_value = fetch_data(cpu, buffer);
-		cpu->P[0] = shift_value & 0x80;
+		cpu->P[0] = (shift_value & 0x80) ? 1 : 0;
 		shift_value = shift_value << 1;
 		cpu->P[1] = (shift_value == 0) ? 1 : 0;
 		cpu->P[7] = (shift_value & 0x80) ? 1 : 0;
 		cpu->memory[shift_address(cpu, buffer)] = shift_value;
 		cpu->cycles += 3;
-		cpu->PC += address_bytes[buffer[cpu->PC]];
+		cpu->PC += address_bytes[buffer[cpu->PC]] + 1;
 	}
 }
 
@@ -812,7 +812,7 @@ void ror(CPU* cpu, unsigned char* buffer)
 		cpu->P[7] = (shift_value & 0x80) ? 1 : 0;
 		cpu->memory[shift_address(cpu, buffer)] = shift_value;
 		cpu->cycles += 3;
-		cpu->PC += address_bytes[buffer[cpu->PC]];
+		cpu->PC += address_bytes[buffer[cpu->PC]] + 1;
 	}
 }
 
@@ -823,9 +823,9 @@ void inc(CPU* cpu, unsigned char* buffer)
 	shift_value++;
 	cpu->P[1] = (shift_value == 0) ? 1 : 0;
 	cpu->P[7] = (shift_value & 0x80) ? 1 : 0;
-	cpu->memory[shift_address(cpu, buffer)] = shift_value;
+	cpu->memory[shift_address(cpu, buffer)&0xFF] = shift_value;
 	cpu->cycles += 4;
-	cpu->PC += address_bytes[buffer[cpu->PC]];
+	cpu->PC += address_bytes[buffer[cpu->PC]] + 1;
 
 }
 
@@ -838,7 +838,7 @@ void dec(CPU* cpu, unsigned char* buffer)
 	cpu->P[7] = (shift_value & 0x80) ? 1 : 0;
 	cpu->memory[shift_address(cpu, buffer)] = shift_value;
 	cpu->cycles += 4;
-	cpu->PC += address_bytes[buffer[cpu->PC]];
+	cpu->PC += address_bytes[buffer[cpu->PC]] + 1;
 
 }
 
@@ -846,7 +846,7 @@ void rol (CPU* cpu, unsigned char* buffer)
 {
 	if (buffer[cpu->PC] == 0x2A) {
 		uint8_t oldP = cpu->P[0];
-		cpu->P[0] = cpu->A & 0x80;
+		cpu->P[0] = (cpu->A & 0x80) ? 1 : 0;
 		cpu->A = cpu->A << 1 | (oldP);
 		cpu->cycles += 2;
 		cpu->PC += 1;
@@ -856,16 +856,14 @@ void rol (CPU* cpu, unsigned char* buffer)
 	else
 	{
 		uint8_t shift_value = fetch_data(cpu, buffer);
-		printf("YO %x\n", shift_value);
 		uint8_t oldP = cpu->P[0];
-		cpu->P[0] = shift_value & 0x80;
+		cpu->P[0] = (shift_value & 0x80) ? 1:0;
 		shift_value = ((shift_value << 1 )| (oldP));
-		printf("%x\n",shift_value & 0x80);
 		cpu->P[1] = (shift_value == 0) ? 1 : 0;
 		cpu->P[7] = (shift_value & 0x80) ? 1 : 0;
 		cpu->memory[shift_address(cpu, buffer)] = shift_value;
 		cpu->cycles += 3;
-		cpu->PC += address_bytes[buffer[cpu->PC]];
+		cpu->PC += address_bytes[buffer[cpu->PC]] + 1;
 	}
 }
 
@@ -898,12 +896,10 @@ uint8_t get_status_flag(uint8_t pflag[])
 {
   int i = 0;
   uint8_t status = 0;
-  printf("...%x\    ", pflag[7] << 7);
   for(i = 0; i < 8; i++)
   {
     status |= pflag[i] << i;
   }
-  printf("...... %x\    ", status);
   return status;
 }
 
@@ -1015,6 +1011,7 @@ int enter_cpu(unsigned char *buffer)
    int i = 1;
    while(i <= 2300)
    {
+	   printf("%d ", i);
      decode_and_execute(&cpu,buffer);
      i++;
    }
