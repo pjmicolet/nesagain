@@ -9,10 +9,10 @@ IDIR=../include
 
 ODIR=obj
 
-_DEPS = romfile.h cpu.h instructions.h
+_DEPS = romfile.h cpu.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o romfile.o cpu.o instructions.o
+_OBJ = main.o romfile.o cpu.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)
