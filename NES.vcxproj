@@ -102,13 +102,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\cpu.c" />
-    <ClCompile Include="src\instructions.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\romfile.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cpu.h" />
-    <ClInclude Include="include\instructions.h" />
     <ClInclude Include="include\romfile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
