@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	int old_frame = 0;
 
 */
-	while (true)
+	while (1)
 	{
 		if (cpu.dma_wait_cycles > 0)
 		{
