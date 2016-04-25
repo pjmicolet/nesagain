@@ -211,6 +211,7 @@ uint16_t fetch_data(CPU *cpu, unsigned char* memory)
 
 uint16_t shift_address(CPU* cpu, unsigned char* memory)
 {
+	uint16_t addr2 = 0;
 	switch (addressing_mode[memory[cpu->PC]])
 	{
 		//ZP
@@ -229,7 +230,7 @@ uint16_t shift_address(CPU* cpu, unsigned char* memory)
 	case 5:
 		return ((uint16_t)(cpu->memory[0xFF & ((memory[cpu->PC + 1] + cpu->X) + 1)]) << 8) | cpu->memory[0xFF & (memory[cpu->PC + 1] + cpu->X)];
 	case 6:
-		uint16_t addr2 = (((cpu->memory[0xFF & (memory[cpu->PC + 1] + 1)])) << 8) | cpu->memory[memory[cpu->PC + 1]];
+		addr2 = (((cpu->memory[0xFF & (memory[cpu->PC + 1] + 1)])) << 8) | cpu->memory[memory[cpu->PC + 1]];
 		return (addr2 + cpu->Y) & 0xFFFF;
 	case 9:
 		return (((memory[cpu->PC + 2]) << 8) | (memory[cpu->PC + 1])) + cpu->Y;
@@ -276,7 +277,8 @@ void store_extra(uint16_t address, uint8_t data, CPU* cpu)
 	{
 		//Need to take into account OAMADDR
 		uint16_t addr = data << 8;
-		for (int i = 0; i < 256; i++)
+		int i = 0;
+		for (i = 0; i < 256; i++)
 			cpu->ppu->OAM[0][i] = cpu->memory[addr + i];
 		if ((cpu->cycles % 2) == 0)
 		{
@@ -1090,7 +1092,7 @@ void rol (CPU* cpu, unsigned char* memory)
 
 void kil(CPU* cpu, unsigned char* memory) {
 	printf("CPU Address %x Cycle %d\n", cpu->PC, cpu->cycles);
-	assert(0,"kil not implemented"); };
+	assert(0); };
 void slo(CPU* cpu, unsigned char* memory) 
 { 
 	uint8_t shift_value = fetch_data(cpu, memory);
@@ -1179,7 +1181,7 @@ void sre(CPU* cpu, unsigned char* memory)
 		cpu->cycles--;
 	cpu->PC += address_bytes[memory[cpu->PC]] + 1;
 };
-void ahx(CPU* cpu, unsigned char* memory) { assert(0, "ahx not implemented"); };
+void ahx(CPU* cpu, unsigned char* memory) { assert(0); };
 void lax(CPU* cpu, unsigned char* memory) 
 {
 	uint16_t pc = cpu->PC;
@@ -1227,16 +1229,16 @@ void isc(CPU* cpu, unsigned char* memory)
 	cpu->PC += address_bytes[memory[cpu->PC]] + 1;
 }
 
-void anc(CPU* cpu, unsigned char* memory) { assert(0,"anc not implemented"); };
-void cli(CPU* cpu, unsigned char* memory) { assert(0, "cli not implemented"); };
-void las(CPU* cpu, unsigned char* memory) { assert(0, "las not implemented"); };
-void arr(CPU* cpu, unsigned char* memory) { assert(0, "arr not implemented"); };
-void tas(CPU* cpu, unsigned char* memory) { assert(0, "tas not implemented"); };
-void alr(CPU* cpu, unsigned char* memory) { assert(0, "alr not implemented"); };
-void xaa(CPU* cpu, unsigned char* memory) { assert(0, "xaa not implemented"); };
-void axs(CPU* cpu, unsigned char* memory) { assert(0, "axs not implemented"); };
-void shy(CPU* cpu, unsigned char* memory) { assert(0, "shy not implemented"); };
-void shx(CPU* cpu, unsigned char* memory) { assert(0, "shx not implemented"); };
+void anc(CPU* cpu, unsigned char* memory) { assert(0); };
+void cli(CPU* cpu, unsigned char* memory) { assert(0); };
+void las(CPU* cpu, unsigned char* memory) { assert(0); };
+void arr(CPU* cpu, unsigned char* memory) { assert(0); };
+void tas(CPU* cpu, unsigned char* memory) { assert(0); };
+void alr(CPU* cpu, unsigned char* memory) { assert(0); };
+void xaa(CPU* cpu, unsigned char* memory) { assert(0); };
+void axs(CPU* cpu, unsigned char* memory) { assert(0); };
+void shy(CPU* cpu, unsigned char* memory) { assert(0); };
+void shx(CPU* cpu, unsigned char* memory) { assert(0); };
 
 
 void(*instruction[256])(CPU*, unsigned char*) = { 
@@ -1259,7 +1261,8 @@ beq ,  sbc ,  kil ,  isc ,  nop ,  sbc ,  inc ,  isc ,  sed ,  sbc ,  nop ,  isc
 
 void initiate_cpu(CPU *cpu,unsigned char* buffer, int size, PPU* ppu)
 {
-	for (int i = 0; i <= 0xFFFF; i++)
+	int i;
+	for (i = 0; i <= 0xFFFF; i++)
 	{
 		cpu->memory[i] = 0;
 	}
@@ -1289,7 +1292,7 @@ void initiate_cpu(CPU *cpu,unsigned char* buffer, int size, PPU* ppu)
 	cpu->dma_wait_cycles = 0;
 	cpu->vram_buff = 0;
 	printf("SSSSize %d\n", size);
-	for (int i = 0x2000; i <= 0x3FFF; i++)
+	for (i = 0x2000; i <= 0x3FFF; i++)
 		cpu->memory[i] = 0;
 	if (size == 16384) {
 		printf("16kb one\n");

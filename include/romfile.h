@@ -1,4 +1,7 @@
 #include <stdint.h>
+#ifdef __linux__
+#include <stdlib.h>
+#endif
 
 /* To be developed */
 struct romFile
